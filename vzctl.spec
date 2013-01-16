@@ -39,7 +39,6 @@ Requires: fileutils
 Requires: vzctl-core = %{version}-%{release}
 Requires: tar
 BuildRequires: libxml2-devel >= 2.6.16
-BuildRequires: libcgroup-devel >= 0.37
 # requires for vzmigrate purposes
 Requires: rsync
 Requires: gawk
@@ -60,6 +59,7 @@ CFLAGS="$RPM_OPT_FLAGS" %configure \
 	--enable-bashcomp \
 	--enable-logrotate \
 	--without-ploop \
+	--without-cgroup \
 	--disable-static
 make %{?_smp_mflags}
 
