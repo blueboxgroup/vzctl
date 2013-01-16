@@ -9,6 +9,7 @@
 %define _vzrebootdir /var/lib/vzctl/vzreboot
 %define _pkglibdir %_libexecdir/vzctl
 %define _scriptdir %_pkglibdir/scripts
+%define _moduledir %_pkglibdir/modules
 %define _configdir %_sysconfdir/vz
 %define _vpsconfdir %_sysconfdir/sysconfig/vz-scripts
 %define _netdir	%_sysconfdir/sysconfig/network-scripts
@@ -48,6 +49,7 @@ Requires: gawk
 Requires: openssh
 # Virtual provides for newer RHEL6 kernel
 Provides: virtual-vzkernel-install = 2.0.0
+Provides: libvzctl-remote-template = 0.30
 
 %description
 This utility allows system administrators to control Linux containers,
@@ -74,6 +76,7 @@ touch $RPM_BUILD_ROOT/etc/sysconfig/vzeventd
 # This could go to vzctl-lib-devel, but since we don't have it...
 rm -f $RPM_BUILD_ROOT/%_libdir/libvzctl.la
 rm -f $RPM_BUILD_ROOT/%_libdir/libvzctl.so
+rm -f $RPM_BUILD_ROOT/%_moduledir/remote_template.la
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -81,6 +84,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %dir %{_scriptdir}
 %{_scriptdir}/initd-functions
+%dir %{_moduledir}
+%{_moduledir}/remote_template.so
 %{_initddir}/vz
 %{_initddir}/vzeventd
 %{_sbindir}/vzeventd

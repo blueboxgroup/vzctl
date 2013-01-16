@@ -261,6 +261,7 @@ AC_CONFIG_FILES([bin/Makefile
                  man/Makefile
                  scripts/Makefile
                  src/lib/Makefile
+                 src/modules/Makefile
                  src/Makefile
                  Makefile])
 AC_OUTPUT
