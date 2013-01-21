@@ -36,6 +36,7 @@ vpsconfdir  = $(pkgconfdir)/conf
 distconfdir = $(pkgconfdir)/dists
 namesdir    = $(pkgconfdir)/names
 
+pkglibexecdir = $(libexecdir)/@PACKAGE@
 scriptdir   = $(pkglibexecdir)/scripts
 modulesdir  = $(pkglibexecdir)/modules
 
