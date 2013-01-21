@@ -219,6 +219,7 @@ OpenVZ containers control utility core package
 %{_scriptdir}/vps-netns_dev_add
 %{_scriptdir}/vps-netns_dev_del
 %{_scriptdir}/vps-create
+%{_scriptdir}/vps-remote_create
 %{_scriptdir}/vps-download
 %{_scriptdir}/vzevent-stop
 %{_scriptdir}/vzevent-reboot

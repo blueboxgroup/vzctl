@@ -32,7 +32,7 @@
 #define PARAM_TEMPLATE_URL 16999
 
 #define VPS_CREATE              SCRIPTDIR "/vps-create"
-#define VPS_REMOTE_CREATE       SCRIPTDIR "/vps-remote-create"
+#define VPS_REMOTE_CREATE       SCRIPTDIR "/vps-remote_create"
 
 typedef struct {
         char *template_file;

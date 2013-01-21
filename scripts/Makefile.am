@@ -25,6 +25,7 @@ script_SCRIPTS = \
 	vps-netns_dev_add \
 	vps-netns_dev_del \
 	vps-net_del \
+	vps-remote_create \
 	vzevent-stop \
 	vzevent-reboot \
 	vps-pci
