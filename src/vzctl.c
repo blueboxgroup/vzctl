@@ -247,12 +247,13 @@ int main(int argc, char *argv[], char *envp[])
 	if (parse_int(argv[2], &veid)) {
 		name = strdup(argv[2]);
 		veid = get_veid_by_name(name);
-		if (veid < 0 || veid > VEID_MAX) {
-			fprintf(stderr, "Bad CT ID %s\n", argv[2]);
-			ret = VZ_INVALID_PARAMETER_VALUE;
-			goto error;
-		}
 	}
+	if (veid < 0 || veid > VEID_MAX) {
+		fprintf(stderr, "Bad CT ID %s\n", argv[2]);
+		ret = VZ_INVALID_PARAMETER_VALUE;
+		goto error;
+	}
+
 	argc -= 2; argv += 2;
 	/* getopt_long() prints argv[0] when reporting errors */
 	argv[0] = _proc_title;
@@ -314,7 +315,7 @@ int main(int argc, char *argv[], char *envp[])
 	}
 	merge_vps_param(gparam, vps_p);
 	merge_global_param(cmd_p, gparam);
-	ret = run_action(veid, action, gparam, vps_p, cmd_p, argc-1, argv+1,
+	ret = run_action(veid, action, gparam, vps_p, cmd_p, argc, argv,
 		skiplock);
 
 error:

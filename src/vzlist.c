@@ -489,7 +489,6 @@ static void print_disabled(struct Cveinfo *p, int index)
 
 static void print_dq(struct Cveinfo *p, size_t res_off, int index)
 {
-	int running = p->status == VE_RUNNING;
 	unsigned long *res = p->quota ?
 		(unsigned long *)(p->quota) + res_off : NULL;
 
@@ -500,8 +499,7 @@ static void print_dq(struct Cveinfo *p, size_t res_off, int index)
 				"      \"softlimit\": %lu,\n"
 				"      \"hardlimit\": %lu\n"
 				"    }",
-				running ? res[0] : 0,
-				res[1], res[2]);
+				res[0], res[1], res[2]);
 		} else
 			printf("null");
 		return;
@@ -1075,15 +1073,17 @@ FOR_ALL_UBC(MERGE_UBC)
 	if (ve->ip == NULL && !list_empty(&res->net.ip)) {
 		ve->ip = strdup(list2str(NULL, &res->net.ip));
 	}
-	if (ve->quota == NULL &&
-		res->dq.diskspace != NULL &&
-		res->dq.diskinodes != NULL)
+	if (ve->quota == NULL && (
+		res->dq.diskspace != NULL ||
+		res->dq.diskinodes != NULL))
 	{
 		ve->quota = x_malloc(sizeof(struct Cquota));
 		memset(ve->quota, 0, sizeof(struct Cquota));
 
-		MERGE_QUOTA(diskspace, ve->quota, res->dq);
-		MERGE_QUOTA(diskinodes, ve->quota, res->dq);
+		if (res->dq.diskspace)
+			MERGE_QUOTA(diskspace, ve->quota, res->dq);
+		if (res->dq.diskinodes)
+			MERGE_QUOTA(diskinodes, ve->quota, res->dq);
 
 	}
 	if (ve->cpu == NULL &&
@@ -1467,6 +1467,11 @@ static int get_ve_ploop_info(struct Cveinfo *ve)
 	if (ploop.get_info_by_descr(descr, &i))
 		return -1;
 
+	if (ve->quota == NULL) {
+		ve->quota = x_malloc(sizeof(struct Cquota));
+		memset(ve->quota, 0, sizeof(struct Cquota));
+	}
+
 	// space avail
 	ve->quota->diskspace[1] = ve->quota->diskspace[2] =
 		(i.fs_blocks * i.fs_bsize) >> 10;
@@ -1673,6 +1678,11 @@ static int get_ve_list()
 		res = sscanf(ep->d_name, "%d.%5s", &veid, str);
 		if (!(res == 2 && !strcmp(str, "conf")))
 			continue;
+		if (veid < 0 || veid > VEID_MAX) {
+			fprintf(stderr, "Warning: invalid CTID in config file "
+					"name: %s, skipping\n", ep->d_name);
+			continue;
+		}
 		if (!check_veid_restr(veid))
 			continue;
 		ve.veid = veid;
@@ -1926,12 +1936,11 @@ int main(int argc, char **argv)
 			veid = strtol(argv[optind], &ep, 10);
 			if (*ep != 0 || !veid) {
 				veid = get_veid_by_name(argv[optind]);
-				if (veid < 0) {
-					fprintf(stderr,
-						"CT ID %s is invalid.\n",
+			}
+			if (veid < 0 || veid > VEID_MAX) {
+				fprintf(stderr, "CT ID %s is invalid.\n",
 						argv[optind]);
-					return 1;
-				}
+				return 1;
 			}
 			optind++;
 			g_ve_list = x_realloc(g_ve_list,
